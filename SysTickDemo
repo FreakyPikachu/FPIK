@@ -1,0 +1,52 @@
+import java.util.Observer;
+import java.util.Observable;
+/**
+ * Write a description of class SysTickDemo here.
+ *
+ * @author Michał Łykowski
+ * @version v1_18.10.2018
+ */
+public class SysTickDemo implements Observer
+{
+    private CortexM0SysTick myDemoCounter;
+
+    /**
+     * Constructor for objects of class SysTickDemo
+     */
+    public SysTickDemo()
+    {
+        myDemoCounter = new CortexM0SysTick();
+        myDemoCounter.addObserver(this);
+        counterShow();
+    }
+    
+    public static void main(String[] arg)
+    {
+        new SysTickDemo();
+    }
+    
+    public void say(String sth)
+    {
+        System.out.println(sth);
+    }
+    
+    public void counterShow()
+    {
+        say("Witam, zaczynam pokaz!\n");
+        say("Na początek:\n" + myDemoCounter);
+        say("ENABLE_CSR-->TRUE");
+        say("TICKINT_CSR-->TRUE");
+        myDemoCounter.setEnable_CSR(true);
+        myDemoCounter.setTickInt_CSR(true);
+        for(int i=0; i<4; i++ )
+        {
+            myDemoCounter.externalTick();
+            say("\nPo impulsie:\n" + myDemoCounter);
+        }
+    }
+
+    public void update(Observable subject, Object arg)
+    {
+        say("\nINTERRUPT_SysTick_CVR=0\n");
+    }
+}
