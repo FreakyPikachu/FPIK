@@ -1,0 +1,136 @@
+import java.util.Observable;
+/**
+ * @author Michał Łykowski
+ * @version v1_18.10.2018
+ */
+public class CortexM0SysTick extends Observable
+{
+    private int register_RVR;
+    private int register_CVR;
+    private boolean countflag_CSR;
+    private boolean clkSrc_CSR;
+    private boolean tickInt_CSR;
+    private boolean enable_CSR;
+
+    public CortexM0SysTick()
+    {
+        register_RVR = 5;
+        register_CVR = 2;
+        countflag_CSR = false;
+        clkSrc_CSR = false;
+        tickInt_CSR = false;
+        enable_CSR = false;
+    }
+    
+    public void externalTick()
+    {
+        if(enable_CSR == true & clkSrc_CSR == false)
+        {
+            if(register_CVR == 0)
+            {
+                if(register_RVR > 0 )
+                {
+                register_CVR = register_RVR;
+                }
+            }              
+            else if(register_CVR == 1)
+            {
+                countflag_CSR = true;
+                register_CVR--;
+                if(tickInt_CSR == true)
+                {
+                    System.out.println("\nINTERRUPT_SysTick_CVR=0\n");
+                    setChanged();
+                    notifyObservers();
+                }
+            }
+            else register_CVR--;
+        }
+    }
+    
+    public void setCVRregister(int newCVR)
+    {
+        countflag_CSR = false;
+        register_CVR = 0;
+    }
+  
+    public int getCVRregister()
+    {
+        countflag_CSR = false;
+        return register_CVR;
+    }
+    
+    public int getCVRregisterGUI()
+    {
+        return register_CVR;
+    }
+    
+    public void setRVRregister(int newRVR)
+    {
+        if(newRVR >= 0 && newRVR < (1<<24))
+            register_RVR = newRVR;
+    }
+    
+    public int getRVRregister()
+    {
+        return register_RVR;
+    }
+    
+    public void setEnable_CSR(boolean enable)
+    {
+        enable_CSR = enable;
+    }
+    
+    public boolean isEnable_CSR()
+    {
+        return enable_CSR;
+    }
+    
+    public void setCountflag_CSR(boolean countflag)
+    {
+        countflag_CSR = countflag;
+    }
+    
+    public boolean isCountflag_CSR()
+    {
+        boolean countflag = countflag_CSR;
+        countflag_CSR = false;
+        return countflag;
+    }
+    
+    public boolean isCountflag_CSR_GUI()
+    {
+        return countflag_CSR;
+    }
+    
+    public void setTickInt_CSR(boolean tickInt)
+    {
+        tickInt_CSR = tickInt;
+    }
+    
+    public boolean isTickInt_CSR()
+    {
+        return tickInt_CSR;
+    }
+    
+    public void setClkSrc_CSR(boolean clkSrc)
+    {
+        clkSrc_CSR = clkSrc;
+    }
+    
+    public boolean isClkSrc_CSR()
+    {
+        return clkSrc_CSR;
+    }
+    
+    public String toString()
+    {
+        return "SysTick Registers: "+ "\n" +
+            "RVR: " + register_RVR + "\n" +
+            "CVR: " + register_CVR + "\n" +
+            "COUNTFLAG_CSR: " + isCountflag_CSR() + "\n" + 
+            "CLKSRC_CSR: " + isClkSrc_CSR() + "\n" +
+            "TICKINT_CSR: " + isTickInt_CSR() + "\n" +
+            "ENABLE_CSR: " + isEnable_CSR()+ "\n";
+    }
+}
